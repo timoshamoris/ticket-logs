@@ -1,0 +1,41 @@
+from flask import Flask, render_template, jsonify, request
+from datetime import datetime
+import json
+import os
+
+app = Flask(__name__)
+LOGS_DIR = "ticket_logs"
+
+if not os.path.exists(LOGS_DIR):
+    os.makedirs(LOGS_DIR)
+
+@app.route("/")
+def home():
+    return "Welcome to the Ticket Logs Viewer!"
+
+@app.route("/logs/<ticket_id>")
+def view_logs(ticket_id):
+    log_file = os.path.join(LOGS_DIR, f"{ticket_id}.json")
+    if not os.path.exists(log_file):
+        return "Log not found.", 404
+    
+    with open(log_file, "r", encoding="utf-8") as f:
+        log_data = json.load(f)
+    
+    return render_template("log_view.html", log=log_data)
+
+@app.route("/api/logs", methods=["POST"])
+def save_logs():
+    data = request.json
+    ticket_id = data.get("ticket_id")
+    if not ticket_id:
+        return jsonify({"error": "ticket_id is required"}), 400
+
+    log_file = os.path.join(LOGS_DIR, f"{ticket_id}.json")
+    with open(log_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    
+    return jsonify({"message": "Log saved successfully"}), 200
+
+if __name__ == "__main__":
+    app.run(port=5000)
