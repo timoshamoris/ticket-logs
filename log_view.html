@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket Logs</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .message { margin-bottom: 10px; }
+        .author { font-weight: bold; }
+        .content { margin-left: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Ticket Logs: {{ log.ticket_id }}</h1>
+    <p><strong>Author:</strong> {{ log.author }}</p>
+    <p><strong>Opened:</strong> {{ log.opened_at }}</p>
+    <p><strong>Closed:</strong> {{ log.closed_at }}</p>
+    <p><strong>Closed by:</strong> {{ log.closed_by }}</p>
+    <p><strong>Reason:</strong> {{ log.reason }}</p>
+
+    <h2>Chat History</h2>
+    {% for message in log.messages %}
+        <div class="message">
+            <div class="author">{{ message.author }}</div>
+            <div class="content">{{ message.content }}</div>
+        </div>
+    {% endfor %}
+</body>
+</html>
